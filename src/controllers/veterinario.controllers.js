@@ -1,6 +1,5 @@
 import Veterinario from "../models/Veterinarios.js";
 import { findAllVeterinarios, addVeterinarian } from "../services/veterinarios.service.js";
-import { validarCrearVeterinario } from "../validators/veterinario.validator.js";
 import { HTTP_RESPONSES } from "../utils/httpResponses.js";
 
 export const getAllVeterinarian = async (req, res) => {
@@ -73,15 +72,32 @@ export const getVeterinarianByLicenseNumber = async (req, res) => {
 };
 
 export const createVeterinarian = async (req, res) => {
-  const { isValid, errors } = validarCrearVeterinario(req.body);
-  if (!isValid) return HTTP_RESPONSES.badRequest(res, errors.join(", "));
-  console.log(req.body);
-  const veterinarian = await addVeterinarian(req.body);
-  if (veterinarian) {
-    return res.status(HTTP_RESPONSES.created).json({
-      httpStatus: HTTP_RESPONSES.created,
-      data: veterinarian,
+  try {
+    const response = await addVeterinarian(req.body);
+
+    if (!response.success) {
+      return res.status(+HTTP_RESPONSES.badRequest).json({
+        success: false,
+        message: "Error en validación",
+        errors: response.errors,
+        data: null, // Mejor usar null que array vacío para objetos
+      });
+    }
+
+    return res.status(+HTTP_RESPONSES.created).json({
+      success: true,
       message: "Veterinario creado exitosamente",
+      data: response.veterinarian,
+      errors: null,
+    });
+  } catch (error) {
+    console.error("⚠️ Error en createVeterinarian:", error); // Mejor console.error
+
+    return res.status(+HTTP_RESPONSES.serverError).json({
+      success: false,
+      message: "Error interno del servidor",
+      errors: ["Error procesando la solicitud"], // Mensaje genérico para cliente
+      data: null,
     });
   }
 };
