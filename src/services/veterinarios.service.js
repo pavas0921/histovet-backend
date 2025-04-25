@@ -9,6 +9,11 @@ export const addVeterinarian = async (data) => {
   try {
     const { nombres, apellidos, especialidad, numeroMatricula, cedula, email, password } = data;
 
+    const { isValidVeterinarian, fieldErrors } = validateVeterinarianFields(data);
+    if (!isValidVeterinarian) {
+      return { success: false, errors: fieldErrors, veterinario: null };
+    }
+
     const existingVet = await existVeterinarian(data);
     if (existingVet) {
       return {
@@ -16,11 +21,6 @@ export const addVeterinarian = async (data) => {
         errors: ["El veterinario ya está registrado (cédula, matrícula o email en uso)"],
         veterinario: null,
       };
-    }
-
-    const { isValidVeterinarian, fieldErrors } = validateVeterinarianFields(data);
-    if (!isValidVeterinarian) {
-      return { success: false, errors: fieldErrors, veterinario: null };
     }
 
     const { isValidPassword, passwordErrors } = passwordValidator(data.password);
@@ -46,7 +46,7 @@ export const addVeterinarian = async (data) => {
     return {
       success: true,
       errors: null,
-      veterinario: veterinarioSafe,
+      veterinarian: veterinarioSafe,
     };
   } catch (error) {
     console.error("Error en addVeterinarian:", error);
@@ -73,4 +73,8 @@ export const existVeterinarian = async (data) => {
   return Veterinario.findOne({
     $or: [{ cedula }, { numeroMatricula }, { email: email.toLowerCase().trim() }],
   });
+};
+
+export const findVeterinarianByEmail = async (email) => {
+  return Veterinario.findOne({ email: email.toLowerCase().trim() }).select("+password");
 };

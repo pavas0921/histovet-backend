@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { connect } from "./config/database.js";
 import veterinarioRoutes from "./routes/veterinarios.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 app.use(cors());
@@ -15,5 +16,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/veterinarios", veterinarioRoutes);
+app.use("/api/auth", authRoutes);
 
 export default app;
