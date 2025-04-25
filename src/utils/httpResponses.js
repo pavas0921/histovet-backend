@@ -1,7 +1,9 @@
 export const HTTP_RESPONSES = {
-    ok: (res, data) => res.status(process.env.HTTP_OK).json(data),
-    created: (res, data) => res.status(process.env.HTTP_CREATED).json(data),
-    badRequest: (res, error) => res.status(process.env.BAD_REQUEST).json({ error }),
-    serverError: (res, error) => res.status(process.env.HTTP_INTERNAL_SERVER_ERROR).json({ error }),
-    notFound: (res, error) => res.status(process.env.HTTP_NOT_FOUND).json({ error }),
-  };
+  ok: parseInt(process.env.HTTP_OK), // 200
+  created: parseInt(process.env.HTTP_CREATED), // 201
+  badRequest: parseInt(process.env.BAD_REQUEST), // 400
+  unauthorized: parseInt(process.env.HTTP_UNAUTHORIZED), // 401
+  notFound: parseInt(process.env.HTTP_NOT_FOUND), // 404
+  noContent: parseInt(process.env.HTTP_NO_CONTENT), // 204
+  serverError: parseInt(process.env.HTTP_INTERNAL_SERVER_ERROR), // 500
+};

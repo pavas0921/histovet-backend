@@ -13,7 +13,6 @@ export const registrarPropietario = async (req, res) => {
 
     // 3. Respuesta exitosa
     HTTP_RESPONSES.created(res, propietario);
-
   } catch (error) {
     // 4. Manejo centralizado de errores
     if (error.message.includes("ya está registrado")) {
